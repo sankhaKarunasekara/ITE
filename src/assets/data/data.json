@@ -379,20 +379,15 @@
 
   "map": [
     {
-      "name": "Monona Terrace Convention Center",
-      "lat": 43.071584,
-      "lng": -89.38012,
+      "name": "Horton Plains National Park",
+      "lng": 80.807114,
+      "lat": 6.802119,
       "center": true
     },
     {
-      "name": "Ionic HQ",
-      "lat": 43.074395,
-      "lng": -89.381056
-    },
-    {
-      "name": "Afterparty - Brocach Irish Pub",
-      "lat": 43.07336,
-      "lng": -89.38335
+      "name": "Kirigalpoththa Trail",
+      "lng": 80.806280,
+      "lat": 6.801521
     }
   ],
 
