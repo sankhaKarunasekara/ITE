@@ -1,0 +1,18 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <ion-list>
+    <ion-item>
+      <ion-label>
+        <h2>{{subTitle}}</h2>
+        <p>{{message}}</p>
+      </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>

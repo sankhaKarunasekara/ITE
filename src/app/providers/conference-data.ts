@@ -158,4 +158,28 @@ export class ConferenceData {
       })
     );
   }
+
+  getPaths() {
+    return this.load().pipe(
+      map((data: any) => {
+        return data.paths;
+      })
+    );
+  }
+
+  getCliffs(){
+    return this.load().pipe(
+      map((data: any) => {
+        return data.cliffs;
+      })
+    );
+  }
+
+  getNoticeAreas(){
+    return this.load().pipe(
+      map((data: any) => {
+        return data.noticeAreas;
+      })
+    );
+  }
 }
