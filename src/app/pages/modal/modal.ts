@@ -30,7 +30,7 @@ export class ModalPage implements OnInit {
 
   ngOnInit() {
     this.audio = new Audio();
-    this.audio.src = '../../../assets/audio/horn.mp3';
+    this.audio.src = '../../../assets/audio/acliff.mp3';
     this.audio.load();
     this.playAudio();
   }

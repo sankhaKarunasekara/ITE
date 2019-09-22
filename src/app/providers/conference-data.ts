@@ -9,6 +9,7 @@ import { UserData } from './user-data';
   providedIn: 'root'
 })
 export class ConferenceData {
+
   data: any;
 
   constructor(public http: HttpClient, public user: UserData) {}
@@ -182,4 +183,13 @@ export class ConferenceData {
       })
     );
   }
-}
+
+  getRoads(){
+    return this.load().pipe(
+      map((data: any) => {
+        return data.roads;
+      })
+    );
+  }
+
+};

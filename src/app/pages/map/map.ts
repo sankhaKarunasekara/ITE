@@ -28,6 +28,15 @@ export class MapPage implements AfterViewInit {
       center: initialPosition,
       zoom: 10,
       mapTypeId: 'terrain',
+      restriction: {
+        latLngBounds: {
+          east: 82,
+          north: 10.0,
+          south: 5.0,
+          west: 79
+        },
+        strictBounds: true
+      },
     });
 
     const marker = new googleMaps.Marker({
@@ -38,15 +47,9 @@ export class MapPage implements AfterViewInit {
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAAQlBMVEVMaXFCiv9Civ9Civ9Civ9Civ9Civ9Civ9Civ+Kt/9+r/9Pkv90qf9hnf9Civ9wpv9Ee/+Jtf9Gjf9/sP9Kj/9KXf+JdfukAAAACXRSTlMAGCD7088IcsuTBctUAAAAYUlEQVR4XlWOWQrAIBBDx302d73/VSu0UMxfQsgLAMSEzmGKcGRCkZylBHPyMJQmk44QIRWdVCuxlgQoRNLaoi4ILs/a9m6VszuGf4PSaX21eyD6oZ256/AHa/0L9RauOw+4XAWqGLX26QAAAABJRU5ErkJggg==',
     });
 
-    const directionsService = new googleMaps.DirectionsService();
-    const directionsRenderer = new googleMaps.DirectionsRenderer({
-      draggable: true,
-      map: map,
-      panel: document.getElementById('right-panel'),
-    });
-
     const allPaths = [];
     const allCliffs = [];
+    const allRoads = [];
     const allNoticeAreas = [];
 
     //set tracks
@@ -68,9 +71,10 @@ export class MapPage implements AfterViewInit {
           strokeWeight: 2,
           fillColor: '#FF0000',
           fillOpacity: 0.35,
+          map: map,
+          content: path.name,
         });
         allCliffs.push(cliff);
-        cliff.setMap(map);
       });
     });
 
@@ -90,11 +94,32 @@ export class MapPage implements AfterViewInit {
       });
     });
 
-    //set permanent markers
-    const totupolaKandaStartingPoint = { lat: 6.835512, lng: 80.810887 };
-    const kirigalPoththaStartingPoint = { lat: 6.835512, lng: 80.810887 };
-    const backersFallTrack = { lat: 6.792802, lng: 80.790705 };
+    //set Roads
+    this.confData.getRoads().subscribe((roadData: any) => {
+      roadData.forEach((path: any) => {
+        const road = new googleMaps.Polyline({
+          path: path.coordinates,
+          geodesic: true,
+          strokeColor: '#182CFA',
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          map: map,
+          content: path.name,
+        });
+        allRoads.push(road);
+      });
+    });
 
+    //set permanent markers
+    const totupolaKandaStartingPoint = { lat: 6.832994, lng: 80.820151 };
+    const kirigalPoththaStartingPoint = { lat: 6.799073, lng: 80.767392 };
+    const backersFallStartingPoint = { lat: 6.792426, lng: 80.789811 };
+    const camp1StartingPoint = { lat: 6.793279, lng: 80.80296 };
+    const ohiyaStartingPoint = { lat: 6.807278, lng: 80.834898 };
+    const pattipolaStartingPoint = { lat: 6.839239, lng: 80.812068 };
+    const worldEndStartingPoint = { lat: 6.78047, lng: 80.794208 };
+
+    //Totupola
     const totupolaKandaStartContent =
       '<div id="content">' +
       '<div id="siteNotice">' +
@@ -117,23 +142,169 @@ export class MapPage implements AfterViewInit {
       title: 'Thotupola Kanda',
     });
 
+    //KiriGal Poththa
+    const kirigalPoththaStartContent =
+      '<div id="content">' +
+      '<div id="siteNotice">' +
+      '</div>' +
+      '<h1 id="firstHeading" class="firstHeading">Kirigalpoththa Kanda</h1>' +
+      '<div id="bodyContent">' +
+      '<p><b>KirigalPoththa Kanda</b>, Kirigalpoththa mountain, Reaching upto 2388m (7835 feet) above mean sea level, Kirigalpoththa Mountain in Sri Lanka looms in the district of Nuwara Eliya casting its shadow over the main city. The name Kirigalpoththa literally translates to Milk (Tree) Bark Rock (Kiri � milk, gal � rock and poththa- tree bark), possibly because the mountain has many tall trees with mottled white bark. Reached by a nature trail in the Horton Plains; this mountain is the second tallest of the island paradise Sri Lanka, and the tallest of the mountains in the island whose summits are  open to access to the general public.</p>' +
+      '<p>Attribution: KirigalPoththa Kanda, <a href="https://www.wikiwand.com/en/Thotupola_Kanda">' +
+      '</p>' +
+      '</div>' +
+      '</div>';
+
+    const kirigalPoththaStartInfowindow = new googleMaps.InfoWindow({
+      content: kirigalPoththaStartContent,
+    });
+
+    const kirigalPoththaMarker = new googleMaps.Marker({
+      position: kirigalPoththaStartingPoint,
+      map: map,
+      title: 'KirigalPoththa Kanda',
+    });
+
+    const backersFallStartContent =
+      '<div id="content">' +
+      '<div id="siteNotice">' +
+      '</div>' +
+      '<h1 id="firstHeading" class="firstHeading">Backers Fall</h1>' +
+      '<div id="bodyContent">' +
+      '<p><b>BackersFall Kanda</b>, Thotupola Kanda, also sometimes referred as the Thotupola Peak or Thotupola Mountain, is the third highest mountain in Sri Lanka situated in Nuwara Eliya district 2,357 m (7,733 ft) above mean sea level. A trail to the top of the mountain, about two kilometres long, starts a few metres away from the Pattipola entrance to the Horton Plains National Park. Most parts of the mountain surface is covered with shrubs adapted to the cool and windy climate of Horton Plains National Park. Strobilanthes, Osbeckia and Rhodomyrtus species grown as shrubs are common among them.Thotupola Kanda</p>' +
+      '<p>Attribution: Totupala Kanda, <a href="https://www.wikiwand.com/en/Thotupola_Kanda">' +
+      '</p>' +
+      '</div>' +
+      '</div>';
+
+    const backersFallStartInfowindow = new googleMaps.InfoWindow({
+      content: backersFallStartContent,
+    });
+
+    const backersFallMarker = new googleMaps.Marker({
+      position: backersFallStartingPoint,
+      map: map,
+      title: 'Backers Fall',
+    });
+
+    //add listners if user click on the marker show message
+    backersFallMarker.addListener('click', function() {
+      backersFallStartInfowindow.open(map, backersFallMarker);
+    });
+
+    const camp1StartContent =
+      '<div id="content">' +
+      '<div id="siteNotice">' +
+      '</div>' +
+      '<h1 id="firstHeading" class="firstHeading">Chiminipool</h1>' +
+      '<div id="bodyContent">' +
+      '<p><b>Camp1 Kanda</b>, Thotupola Kanda, also sometimes referred as the Thotupola Peak or Thotupola Mountain, is the third highest mountain in Sri Lanka situated in Nuwara Eliya district 2,357 m (7,733 ft) above mean sea level. A trail to the top of the mountain, about two kilometres long, starts a few metres away from the Pattipola entrance to the Horton Plains National Park. Most parts of the mountain surface is covered with shrubs adapted to the cool and windy climate of Horton Plains National Park. Strobilanthes, Osbeckia and Rhodomyrtus species grown as shrubs are common among them.Thotupola Kanda</p>' +
+      '<p>Attribution: Totupala Kanda, <a href="https://www.wikiwand.com/en/Thotupola_Kanda">' +
+      '</p>' +
+      '</div>' +
+      '</div>';
+
+    const camp1StartInfowindow = new googleMaps.InfoWindow({
+      content: camp1StartContent,
+    });
+
+    const camp1Marker = new googleMaps.Marker({
+      position: camp1StartingPoint,
+      map: map,
+      title: 'Camp1Chiminipool',
+    });
+
+    //add listners if user click on the marker show message
+    camp1Marker.addListener('click', function() {
+      camp1StartInfowindow.open(map, camp1Marker);
+    });
+
+    const ohiyaStartContent =
+      '<div id="content">' +
+      '<div id="siteNotice">' +
+      '</div>' +
+      '<h1 id="firstHeading" class="firstHeading">Ohiya</h1>' +
+      '<div id="bodyContent">' +
+      '<p><b>Ohiya Kanda</b>, Thotupola Kanda, also sometimes referred as the Thotupola Peak or Thotupola Mountain, is the third highest mountain in Sri Lanka situated in Nuwara Eliya district 2,357 m (7,733 ft) above mean sea level. A trail to the top of the mountain, about two kilometres long, starts a few metres away from the Pattipola entrance to the Horton Plains National Park. Most parts of the mountain surface is covered with shrubs adapted to the cool and windy climate of Horton Plains National Park. Strobilanthes, Osbeckia and Rhodomyrtus species grown as shrubs are common among them.Thotupola Kanda</p>' +
+      '<p>Attribution: Totupala Kanda, <a href="https://www.wikiwand.com/en/Thotupola_Kanda">' +
+      '</p>' +
+      '</div>' +
+      '</div>';
+
+    const ohiyaStartInfowindow = new googleMaps.InfoWindow({
+      content: ohiyaStartContent,
+    });
+
+    const ohiyaMarker = new googleMaps.Marker({
+      position: ohiyaStartingPoint,
+      map: map,
+      title: 'Ohiya',
+    });
+
+    //add listners if user click on the marker show message
+    ohiyaMarker.addListener('click', function() {
+      ohiyaStartInfowindow.open(map, ohiyaMarker);
+    });
+
+    const pattipolaStartContent =
+      '<div id="content">' +
+      '<div id="siteNotice">' +
+      '</div>' +
+      '<h1 id="firstHeading" class="firstHeading">Pattipola</h1>' +
+      '<div id="bodyContent">' +
+      '<p><b>Pattipola Kanda</b>, Thotupola Kanda, also sometimes referred as the Thotupola Peak or Thotupola Mountain, is the third highest mountain in Sri Lanka situated in Nuwara Eliya district 2,357 m (7,733 ft) above mean sea level. A trail to the top of the mountain, about two kilometres long, starts a few metres away from the Pattipola entrance to the Horton Plains National Park. Most parts of the mountain surface is covered with shrubs adapted to the cool and windy climate of Horton Plains National Park. Strobilanthes, Osbeckia and Rhodomyrtus species grown as shrubs are common among them.Thotupola Kanda</p>' +
+      '<p>Attribution: Totupala Kanda, <a href="https://www.wikiwand.com/en/Thotupola_Kanda">' +
+      '</p>' +
+      '</div>' +
+      '</div>';
+
+    const pattipolaStartInfowindow = new googleMaps.InfoWindow({
+      content: pattipolaStartContent,
+    });
+
+    const pattipolaMarker = new googleMaps.Marker({
+      position: pattipolaStartingPoint,
+      map: map,
+      title: 'Pattipola',
+    });
+
+    //add listners if user click on the marker show message
+    pattipolaMarker.addListener('click', function() {
+      pattipolaStartInfowindow.open(map, pattipolaMarker);
+    });
+
+    const worldEndStartContent =
+      '<div id="content">' +
+      '<div id="siteNotice">' +
+      '</div>' +
+      '<h1 id="firstHeading" class="firstHeading">WorldEnd</h1>' +
+      '<div id="bodyContent">' +
+      '<p><b>WorldEnd Kanda</b>, Thotupola Kanda, also sometimes referred as the Thotupola Peak or Thotupola Mountain, is the third highest mountain in Sri Lanka situated in Nuwara Eliya district 2,357 m (7,733 ft) above mean sea level. A trail to the top of the mountain, about two kilometres long, starts a few metres away from the WorldEnd entrance to the Horton Plains National Park. Most parts of the mountain surface is covered with shrubs adapted to the cool and windy climate of Horton Plains National Park. Strobilanthes, Osbeckia and Rhodomyrtus species grown as shrubs are common among them.Thotupola Kanda</p>' +
+      '<p>Attribution: Totupala Kanda, <a href="https://www.wikiwand.com/en/Thotupola_Kanda">' +
+      '</p>' +
+      '</div>' +
+      '</div>';
+
+    const worldEndStartInfowindow = new googleMaps.InfoWindow({
+      content: worldEndStartContent,
+    });
+
+    const worldEndMarker = new googleMaps.Marker({
+      position: worldEndStartingPoint,
+      map: map,
+      title: 'WorldEnd',
+    });
+
+    //add listners if user click on the marker show message
+    worldEndMarker.addListener('click', function() {
+      worldEndStartInfowindow.open(map, worldEndMarker);
+    });
+
     trackLocation({
       onSuccess: ({ coords: { latitude: lat, longitude: lng } }) => {
         const currentPosition = { lat: lat, lng: lng };
         marker.setPosition(currentPosition);
         map.panTo(currentPosition);
-
-        // directionsRenderer.addListener('directions_changed', function() {
-        //   computeTotalDistance(directionsRenderer.getDirections());
-        // });
-
-        // displayRoute(
-        //   { lat: 6.7688, lng: 80.7826 },
-        //   { lat: 6.773, lng: 80.7881 },
-        //   currentPosition,
-        //   directionsService,
-        //   directionsRenderer
-        // );
 
         let notice = false;
         const curPosition = new googleMaps.LatLng(lat, lng);
@@ -145,27 +316,29 @@ export class MapPage implements AfterViewInit {
           false
         );
 
+        console.log(allCliffs);
         const isCloseToCliff = allCliffs.reduce(
           (accumulator, path) => accumulator || googleMaps.geometry.poly.containsLocation(curPosition, path),
-          false
-        );
-
-        // console.log(googleMaps.geometry.poly.containsLocation(curPosition, allNoticeAreas[0]));
-        // console.log(isCloseToCliff);
-        // console.log('contains' + googleMaps.geometry.poly.containsLocation(curPosition, allNoticeAreas[0]));
+          false);
 
         const isNoticeArea = allNoticeAreas.reduce((accumulator, path) => {
           return accumulator || googleMaps.geometry.poly.containsLocation(curPosition, path);
         }, false);
 
-        //notice = googleMaps.geometry.poly.containsLocation(curPosition, allPaths[0]);
+        const [currentCliff] = allCliffs.filter(path => googleMaps.geometry.poly.containsLocation(curPosition, path));
+        const [currentNoticeArea] = allNoticeAreas.filter(path =>
+          googleMaps.geometry.poly.containsLocation(curPosition, path)
+        );
+
         if (isCloseToCliff) {
-          this.showWarning(lat, lng);
+          this.showWarning(currentCliff);
         }
-        console.log(isNoticeArea);
+
         if (isNoticeArea) {
-          showNotice();
+          showNotice(currentNoticeArea);
         }
+
+
       },
       onError: err => alert(`Error: ${getPositionErrorMessage(err.code) || err.message}`),
     });
@@ -179,38 +352,10 @@ export class MapPage implements AfterViewInit {
       totupolaKandaStartInfowindow.open(map, totupolaKandaMarker);
     });
 
-    function showNotice() {
+    function showNotice(currentNoticeArea) {
+      console.log(currentNoticeArea);
       totupolaKandaStartInfowindow.open(map, totupolaKandaMarker);
     }
-
-    //   function displayRoute(origin, destination, currentPosition, service, display) {
-    //     service.route(
-    //       {
-    //         origin: origin,
-    //         destination: destination,
-    //         waypoints: [{ location: new googleMaps.LatLng(currentPosition.lat, currentPosition.lng), stopover: false }],
-    //         travelMode: 'WALKING',
-    //         // avoidTolls: true,
-    //       },
-    //       function(response, status) {
-    //         if (status === 'OK') {
-    //           display.setDirections(response);
-    //         } else {
-    //           alert('Could not display directions due to: ' + status);
-    //         }
-    //       }
-    //     );
-    //   }
-
-    //   function computeTotalDistance(result) {
-    //     var total = 0;
-    //     var myroute = result.routes[0];
-    //     for (var i = 0; i < myroute.legs.length; i++) {
-    //       total += myroute.legs[i].distance.value;
-    //     }
-    //     total = total / 1000;
-    //     document.getElementById('total').innerHTML = total + ' km';
-    //   }
   }
 
   async presentModal() {
@@ -234,8 +379,24 @@ export class MapPage implements AfterViewInit {
     });
   }
 
-  showWarning = (lat, lng) => {
-    this.presentModal();
+  showWarning = cliff => {
+    const cliffName = cliff.content;
+    const audio = new Audio();
+    console.log(cliffName);
+
+    //put your cliff names here CliffName is comming from data.json file
+    // you should specifiy CliffName there
+    if (cliffName == 'CliffOne') {
+      audio.src = '../../../assets/audio/acliff.mp3';
+
+    }else if(cliffName=="putYourCliffNameHere"){
+      audio.src = '../../../assets/audio/acliff.mp3';
+    }else{
+
+    }
+
+    audio.load();
+    audio.play();
   };
 }
 
@@ -282,7 +443,7 @@ function getGoogleMaps(apiKey: string): Promise<any> {
 
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.31&libraries=geometry async defer`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.35&libraries=geometry async defer`;
     script.async = true;
     script.defer = true;
     document.body.appendChild(script);
