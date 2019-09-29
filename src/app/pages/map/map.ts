@@ -33,9 +33,9 @@ export class MapPage implements AfterViewInit {
           east: 82,
           north: 10.0,
           south: 5.0,
-          west: 79
+          west: 79,
         },
-        strictBounds: true
+        strictBounds: true,
       },
     });
 
@@ -88,6 +88,7 @@ export class MapPage implements AfterViewInit {
           strokeWeight: 2,
           fillColor: '#FFFFF0',
           fillOpacity: 0.35,
+          content: path.name,
         });
         allNoticeAreas.push(noticeArea);
         noticeArea.setMap(map);
@@ -319,7 +320,8 @@ export class MapPage implements AfterViewInit {
         console.log(allCliffs);
         const isCloseToCliff = allCliffs.reduce(
           (accumulator, path) => accumulator || googleMaps.geometry.poly.containsLocation(curPosition, path),
-          false);
+          false
+        );
 
         const isNoticeArea = allNoticeAreas.reduce((accumulator, path) => {
           return accumulator || googleMaps.geometry.poly.containsLocation(curPosition, path);
@@ -337,8 +339,6 @@ export class MapPage implements AfterViewInit {
         if (isNoticeArea) {
           showNotice(currentNoticeArea);
         }
-
-
       },
       onError: err => alert(`Error: ${getPositionErrorMessage(err.code) || err.message}`),
     });
@@ -353,8 +353,15 @@ export class MapPage implements AfterViewInit {
     });
 
     function showNotice(currentNoticeArea) {
-      console.log(currentNoticeArea);
-      totupolaKandaStartInfowindow.open(map, totupolaKandaMarker);
+      // console.log(currentNoticeArea);
+      const noticeNotice = currentNoticeArea.content;
+//here you can add the all notice areas
+      if (noticeNotice == 'Thotupala Thanna Start') {
+        totupolaKandaStartInfowindow.open(map, totupolaKandaMarker);
+      } else if (noticeNotice == 'Kirigalpoththa Thanna Start') {
+        kirigalPoththaStartInfowindow.open(map, kirigalPoththaMarker);
+      } else {
+      }
     }
   }
 
@@ -388,11 +395,9 @@ export class MapPage implements AfterViewInit {
     // you should specifiy CliffName there
     if (cliffName == 'CliffOne') {
       audio.src = '../../../assets/audio/acliff.mp3';
-
-    }else if(cliffName=="putYourCliffNameHere"){
+    } else if (cliffName == 'putYourCliffNameHere') {
       audio.src = '../../../assets/audio/acliff.mp3';
-    }else{
-
+    } else {
     }
 
     audio.load();
