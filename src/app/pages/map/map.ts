@@ -358,6 +358,10 @@ export class MapPage implements AfterViewInit {
 //here you can add the all notice areas
       if (noticeNotice == 'Thotupala Thanna Start') {
         totupolaKandaStartInfowindow.open(map, totupolaKandaMarker);
+        const audio = new Audio();
+        audio.src = '../../../assets/audio/ThotupalaThannaStart.mp3';
+        audio.load();
+        audio.play();
       } else if (noticeNotice == 'Kirigalpoththa Thanna Start') {
         kirigalPoththaStartInfowindow.open(map, kirigalPoththaMarker);
       } else {
